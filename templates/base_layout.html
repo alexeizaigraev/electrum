@@ -4,15 +4,15 @@
     <head>
         <meta charset='utf-8'>
         <title>{{template "title" .}} - Snippetbox</title>
+        <link rel="stylesheet" type="text/css" href="/static/styles.css">
     </head>
     <body>
         <header>
             <h2><a href='/'>Electrum</a></h2>
         </header>
-        <footer><p><a href="/database">База данных</a>  |  <a href="/some">Всячина</a>  |  <a href="/people">Люди</a></p>  </footer>
-        <nav>
-            <a href='/'>Домашняя страница</a>
-        </nav>
+        
+        <p><a href="/database">База данных</a>  |  <a href="/menu_people">Люди</a>  |  <a href="/menu_some">Всячина</a>  |  <a href="/menu_monitor">Монитор</a></p>
+        <p>______________________________________________________</p>
         <main>
             {{template "main" .}}
         </main>

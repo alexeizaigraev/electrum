@@ -1,0 +1,25 @@
+{{template "base" .}}
+
+{{define "title"}}{{ .Kind }}{{end}}
+
+{{define "main"}}
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .Kind }}</title>
+</head>
+<body>
+    <h3>{{ .Kind }}</h3>
+    <p> {{.Rez}} </p>
+    <p> {{.Err}} </p>
+    <p> {{.Fname}} </p>
+    <table>
+        {{range .Data }}
+        <tr>
+            <td>{{ . }}</td>
+        </tr>
+        {{end}}
+    </table>  
+</body>
+{{end}}
+
+{{template "footer" .}}

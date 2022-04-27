@@ -3,6 +3,7 @@ package main
 
 import (
 	"database/sql"
+	"electrum/db"
 	"fmt"
 	"html/template"
 	"log"
@@ -21,7 +22,7 @@ type Otbor struct {
 func OtborDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-	db, err := sql.Open("postgres", ConnStr)
+	db, err := sql.Open("postgres", db.ConnStr)
 	_, err = db.Exec("delete from otbor where id=$1",
 		id)
 	if err != nil {
@@ -39,7 +40,7 @@ func OtborEditHandler(w http.ResponseWriter, r *http.Request) {
 	term := r.FormValue("term")
 	dep := r.FormValue("dep")
 
-	db, err := sql.Open("postgres", ConnStr)
+	db, err := sql.Open("postgres", db.ConnStr)
 	_, err = db.Exec("update otbor set term=$1, dep=$2 where id = $3",
 		term, dep, id)
 	if err != nil {
@@ -52,7 +53,7 @@ func OtborEditPage(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	id := vars["id"]
-	db, err := sql.Open("postgres", ConnStr)
+	db, err := sql.Open("postgres", db.ConnStr)
 	row := db.QueryRow("select * from otbor where id = $1", id)
 	otbor := Otbor{}
 	err = row.Scan(&otbor.Id, &otbor.Term, &otbor.Dep)
@@ -82,7 +83,7 @@ func OtborIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := sql.Open("postgres", ConnStr)
+	db, err := sql.Open("postgres", db.ConnStr)
 	rows, err := db.Query("select * from otbor order by term")
 	if err != nil {
 		panic(err)

@@ -3,6 +3,9 @@ package main
 
 import (
 	"database/sql"
+	"electrum/control_otbor"
+	"electrum/db"
+	"electrum/people"
 	"fmt"
 	"html/template"
 	"log"
@@ -15,15 +18,25 @@ var Db *sql.DB
 
 func main() {
 
-	Db, err := sql.Open("postgres", ConnStr)
+	Db, err := sql.Open("postgres", db.ConnStr)
 	if err != nil {
 		//return err
 		panic(err)
 	}
 	defer Db.Close()
 
+	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./static"))))
+
 	router := mux.NewRouter()
 	router.HandleFunc("/", home)
+	router.HandleFunc("/menu_people", people.PagePeopleMenu)
+	router.HandleFunc("/people_priem", people.PriemPage)
+	router.HandleFunc("/people_otpusk", people.OtpuskPage)
+	router.HandleFunc("/people_perevod", people.PerevodPage)
+
+	router.HandleFunc("/control_otbor_menu", control_otbor.PageControlOtborMenu)
+	router.HandleFunc("/control_otbor_term", control_otbor.PageControlOtborTerm)
+
 	router.HandleFunc("/database", PageDatabase)
 	router.HandleFunc("/otbor_refresh", OtborRefresh)
 	router.HandleFunc("/otbor_index", OtborIndex)
@@ -31,10 +44,6 @@ func main() {
 	router.HandleFunc("/otbor_edit/{id:[0-9]+}", OtborEditPage).Methods("GET")
 	router.HandleFunc("/otbor_edit/{id:[0-9]+}", OtborEditHandler).Methods("POST")
 	router.HandleFunc("/otbor_delete/{id:[0-9]+}", OtborDeleteHandler)
-
-	//t, _ := template.ParseFiles("templates/index-go.html", "templates/base-go.html")
-	//name := "world"
-	//t.Execute(os.Stdout, name)
 
 	http.Handle("/", router)
 
@@ -71,12 +80,12 @@ func OtborRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ClearTableOtbor()
-	res := InsertOtborFromFile() + "  |  "
-	ClearTableTerminals()
-	res += InsertTerminalsFromFile() + "  |  "
-	ClearTableDepartments()
-	res += InsertDepartmentsFromFile()
+	db.ClearTableOtbor()
+	res := db.InsertOtborFromFile() + "  |  "
+	db.ClearTableTerminals()
+	res += db.InsertTerminalsFromFile() + "  |  "
+	db.ClearTableDepartments()
+	res += db.InsertDepartmentsFromFile()
 
 	//inf := Info{res}
 	files := []string{
